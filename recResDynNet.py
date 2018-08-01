@@ -6,6 +6,7 @@ import tensorflow as tf
 class RecurrentResDynNet(object):
     def __init__(self, batchSize=1, hiddenLayerCount=5, learningRate=0.1, impulseResponse=list([0, 1, 2]), h=0.1):
         self.batchSize = batchSize
+        self.hiddenLayerCount = hiddenLayerCount
 
         with tf.name_scope('labels'):
             self.t = tf.placeholder(tf.float32, shape=[1, self.batchSize], name="labels")

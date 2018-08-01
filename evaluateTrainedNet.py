@@ -151,12 +151,30 @@ class TestCase(object):
 
     def calculateNetAndODERecurrentResDyn(self, tfSession, net):
 
+        histories = list()
+
+        for layer in net.allLayerOps:
+            if "history" not in layer:
+                continue
+            histories.append([[0.0] * net.batchSize] * int(layer["W"].shape[0]))
+
         history_X1 = [[0.0], [0.0]]
         history_X2 = [[0.0], [0.0], [0.0], [0.0]]
         history_X3 = history_X1 + history_X2
         history_X4 = history_X2 + history_X3
         history_X5 = history_X3 + history_X4
         history_X6 = history_X4 + history_X5
+
+        outputListRequest = list()
+        outputListResults = list()
+        feedDict = dict()
+
+        outputListRequest.append(net.allLayerOps[-1]["output"])
+
+        for layer in net.allLayerOps:
+            if "history" in layer:
+                outputListRequest.append(layer["history"])
+
 
         for step, _ in enumerate(self.t):
 
@@ -167,25 +185,22 @@ class TestCase(object):
 
             input = [[self.u[step]], [self.y[step]]]
 
-            self.netOutput[step], history_X1, history_X2, history_X3, history_X4, history_X5, history_X6 = (tfSession.run(
-                [
-                    net.y,
-                    net.history_01,
-                    net.history_02,
-                    net.history_03,
-                    net.history_04,
-                    net.history_05,
-                    net.history_06,
-                ],
-                feed_dict={
-                    net.input: input,
-                    net.history_01: history_X1,
-                    net.history_02: history_X2,
-                    net.history_03: history_X3,
-                    net.history_04: history_X4,
-                    net.history_05: history_X5,
-                    net.history_06: history_X6,
-                }))
+            feedDict[net.allLayerOps[0]["output"]] = input
+            historyCounter = 0
+            for layer in net.allLayerOps:
+                if "history" not in layer:
+                    continue
+                feedDict[layer["history"]] = histories[historyCounter]
+                historyCounter += 1
+
+            # self.netOutput[step], history_X1, history_X2, history_X3, history_X4, history_X5, history_X6 = (tfSession.run(
+            netOutput = (tfSession.run(outputListRequest, feed_dict=feedDict))
+
+            for i, stuff in enumerate(netOutput):
+                if i == 0:
+                    self.netOutput[step] = stuff
+                    continue
+                histories[i - 1] = stuff
 
             if step < len(self.t) - 1:
                 self.y[step + 1], self.yP[step + 1] = self.model.performStep(self.netOutput[step], [self.t[step - 1], self.t[step]])
@@ -212,7 +227,7 @@ def run(theNetti, sessionFolderOrIndex):
         theNet = RecurrentResDynNet(batchSize=1, hiddenLayerCount=6)
 
     # logDir = "C:\\tensorLogs\\regler"
-    logDir = r"D:\00 eigene Daten\000 FH\Ki\tensorCheck\logs"
+    logDir = r"D:\00 eigene Daten\000 FH\S 7 BA\tensorCheck\logs"
     runDirs = os.listdir(logDir)
 
 
@@ -306,7 +321,7 @@ def run(theNetti, sessionFolderOrIndex):
         for testCase in testCases:
             testCase.calculateNetAndODERecurrent(session, theNet)
 
-    if theNetti == "recurrentRes" or theNetti == "recurrentResDyn":
+    if theNetti == "recurrentRes":
         for testCase in testCases:
             testCase.calculateNetAndODERecurrentRes(session, theNet)
 
@@ -370,7 +385,7 @@ def run(theNetti, sessionFolderOrIndex):
 
 if __name__ == "__main__":
     # run("control", -1)
-    run("recurrentRes", -1)
+    run("recurrentResDyn", -1)
 
     # run("control", "run016")
     # run("recurrent", "run018")

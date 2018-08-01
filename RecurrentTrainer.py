@@ -70,7 +70,7 @@ class RecurrentTrainer(object):
         grads = None
 
         # logDir = "C:\\tensorLogs\\regler"
-        logDir = r"D:\00 eigene Daten\000 FH\Ki\tensorCheck\logs"
+        logDir = r"D:\00 eigene Daten\000 FH\S 7 BA\tensorCheck\logs"
         if not os.path.isdir(logDir):
             os.makedirs(logDir)
         dirs = os.listdir(logDir)

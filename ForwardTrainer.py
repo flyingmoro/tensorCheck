@@ -2,7 +2,7 @@
 
 
 # tensorboard --logdir="C:\tensorLogs\regler"
-# tensorboard --logdir="D:\00 eigene Daten\000 FH\Ki\tensorCheck\logs"
+# tensorboard --logdir="D:\00 eigene Daten\000 FH\S 7 BA\tensorCheck\logs"
 from collections import deque
 
 from random import shuffle
@@ -49,7 +49,7 @@ class ControllerTrainer(object):
         train_step = tf.train.AdagradOptimizer(learningRate).minimize(self.net.trainingCost)
 
         # logDir = "C:\\tensorLogs\\regler"
-        logDir = r"D:\00 eigene Daten\000 FH\Ki\tensorCheck\logs"
+        logDir = r"D:\00 eigene Daten\000 FH\S 7 BA\tensorCheck\logs"
         if not os.path.isdir(logDir):
             os.makedirs(logDir)
         dirs = os.listdir(logDir)
