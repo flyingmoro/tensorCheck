@@ -1,1 +1,4 @@
 tensorboard --logdir="C:\tensorLogs\regler"
+
+
+tensorboard --logdir="C:\Users\H5489\Documents\00 BA\tensorLogs"

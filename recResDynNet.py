@@ -29,8 +29,6 @@ class RecurrentResDynNet(object):
             thisLayer["bias"] = tf.Variable(tf.random_uniform([2, 1], -1, 1), name="Bias1")
             thisLayer["output"] = tf.nn.relu(tf.matmul(thisLayer["W"], previousLayer["output"]) + thisLayer["bias"] + tf.multiply(thisLayer["WRecurrent"], thisLayer["history"]))
             self.allLayerOps.append(thisLayer)
-        with tf.name_scope('weights'):
-            tf.summary.histogram('W_1', thisLayer["W"])
 
         for hiddenLayerNumber in range(2, hiddenLayerCount + 1):
             with tf.name_scope("hiddenLayer_{}".format(hiddenLayerNumber)):
@@ -46,12 +44,6 @@ class RecurrentResDynNet(object):
                 thisLayer["bias"] = tf.Variable(tf.random_uniform([layerWidth, 1], -1, 1), name="Bias_{}".format(hiddenLayerNumber))
                 thisLayer["output"] = tf.nn.relu(tf.matmul(thisLayer["W"], thisLayer["input"]) + thisLayer["bias"] + tf.multiply(thisLayer["WRecurrent"], thisLayer["history"]))
                 self.allLayerOps.append(thisLayer)
-            with tf.name_scope("weights"):
-                tf.summary.histogram("W_{}".format(hiddenLayerNumber), thisLayer["W"])
-            with tf.name_scope('bias'):
-                tf.summary.histogram("bias_{}".format(hiddenLayerNumber), thisLayer["bias"])
-            with tf.name_scope("weights_recurrent"):
-                tf.summary.histogram("WRecurrent_{}".format(hiddenLayerNumber), thisLayer["WRecurrent"])
 
 
 
@@ -64,10 +56,7 @@ class RecurrentResDynNet(object):
             # thisLayer["output"] = tf.matmul(self.WOut, self.x6) + self.biasOut
             thisLayer["output"] = tf.sigmoid(tf.matmul(thisLayer["W"], previousLayer["output"]) + thisLayer["bias"])
             self.allLayerOps.append(thisLayer)
-        with tf.name_scope('weights'):
-            tf.summary.histogram('W_Out', thisLayer["W"])
-        with tf.name_scope('bias'):
-            tf.summary.histogram('bias_out', thisLayer["bias"])
+
 
         with tf.name_scope('training'):
             lastLayer = self.allLayerOps[-1]
@@ -78,4 +67,20 @@ class RecurrentResDynNet(object):
             self.train_step = self.optimizer.minimize(self.trainingCost)
             self.gradients = self.optimizer.compute_gradients(self.trainingCost)
 
+        with tf.name_scope('weights'):
+            for i, layer in enumerate(self.allLayerOps):
+                if not "W" in layer:
+                    continue
+                tf.summary.histogram("W_{}".format(i), layer["W"])
 
+        with tf.name_scope('bias'):
+            for i, layer in enumerate(self.allLayerOps):
+                if not "bias" in layer:
+                    continue
+                tf.summary.histogram("bias_{}".format(i), layer["bias"])
+
+        with tf.name_scope('weights_recurrent'):
+            for i, layer in enumerate(self.allLayerOps):
+                if not "WRecurrent" in layer:
+                    continue
+                tf.summary.histogram("weights_rec__{}".format(i), layer["WRecurrent"])
