@@ -206,11 +206,11 @@ class RecurrentResDynTrainer(object):
 
 if __name__ == "__main__":
     labelParamsList = list()
-    for initY in range(7, 8): # 0, 11
-    # for initY in range(1, 11): # 0, 11
+    # for initY in range(7, 8): # 0, 11
+    for initY in range(1, 11): # 0, 11
         initialY = float(initY) * 0.1
-        for i in range(3, 5): # 0, 30
-        # for i in range(0, 10): # 0, 30
+        # for i in range(3, 5): # 0, 30
+        for i in range(0, 10): # 0, 30
             timeOfUChange = float(i) * 0.1
             uHighLevel = 1
             uLowLevel = 0
@@ -262,7 +262,7 @@ if __name__ == "__main__":
     print("starting to learn, stepResponses count: {}".format(len(extractedLabels)))
     theTrainer = RecurrentResDynTrainer(extractedLabels, batchSize=1, hiddenLayerCount=6)
     try:
-        meanErrorPerBatch, trainDir = theTrainer.train(learningRate=0.5, epochCount=3)
+        meanErrorPerBatch, trainDir = theTrainer.train(learningRate=0.05, epochCount=3)
     except (KeyboardInterrupt, SystemExit):
         print("stopping...")
         theTrainer.abortLearning()

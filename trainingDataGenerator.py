@@ -220,7 +220,7 @@ if __name__ == "__main__":
     trainingParameterSets = list()
     for initY in range(9, 10): # 0, 11
         initialY = float(initY) * 0.1
-        for i in range(15, 16): # 0, 30
+        for i in range(3, 4): # 0, 30
             timeOfUChange = float(i) * 0.1
             uHighLevel = 1
             uLowLevel = 0

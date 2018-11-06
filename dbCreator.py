@@ -40,10 +40,10 @@ tb_rsds_sample_CREATE_STATEMENT_TEMPLATE = (
         "`id` INT UNSIGNED NOT NULL AUTO_INCREMENT, "
         "`sensor_id` INT UNSIGNED NOT NULL, "
         "`sequence_id` INT UNSIGNED NOT NULL, "
-        "`timestamp` TIME NOT NULL, "
+        "`timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
         "`sequence_time_ms` BIGINT UNSIGNED NOT NULL, "
         "`byte_type` BLOB NOT NULL DEFAULT '0', "
-        "{}, "
+        # "{}, "
     "PRIMARY KEY (`id`), "
     "UNIQUE INDEX `unique_index` (`id`, `sensor_id`, `sequence_id`, `timestamp`, `sequence_time_ms`) "
     ") "
@@ -51,16 +51,17 @@ tb_rsds_sample_CREATE_STATEMENT_TEMPLATE = (
     "ENGINE=InnoDB"
     ";")
 
-rsdsPointCount = 3
-dataColumns = list()
-for i in range(rsdsPointCount):
-    dataColumns.append("`angle_{}` FLOAT NOT NULL".format(i))
-    dataColumns.append("`range_{}` FLOAT NOT NULL".format(i))
-    dataColumns.append("`amplitude_{}` FLOAT NOT NULL".format(i))
-    dataColumns.append("`doppler_{}` FLOAT NOT NULL".format(i))
-dataColumns = ", ".join(dataColumns)
-createStatements.append(tb_rsds_sample_CREATE_STATEMENT_TEMPLATE.format(dataColumns))
+# rsdsPointCount = 3
+# dataColumns = list()
+# for i in range(rsdsPointCount):
+#     dataColumns.append("`angle_{}` FLOAT NOT NULL".format(i))
+#     dataColumns.append("`range_{}` FLOAT NOT NULL".format(i))
+#     dataColumns.append("`amplitude_{}` FLOAT NOT NULL".format(i))
+#     dataColumns.append("`doppler_{}` FLOAT NOT NULL".format(i))
+# dataColumns = ", ".join(dataColumns)
+# createStatements.append(tb_rsds_sample_CREATE_STATEMENT_TEMPLATE.format(dataColumns))
 
+createStatements.append(tb_rsds_sample_CREATE_STATEMENT_TEMPLATE)
 
 
 
@@ -130,7 +131,7 @@ def createDb():
         host="127.0.0.1",
         port=3306,
         user="root",
-        passwd="$St3ph4n",
+        passwd="nntrainer",
         charset='utf8',
         use_unicode=True
     )
